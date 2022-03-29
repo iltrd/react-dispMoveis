@@ -1,0 +1,141 @@
+import React from 'react';
+import {Text, View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+
+export default class App extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {altura:0,peso:0,resultado:0,resultadoText:""}
+    this.calcular = this.calcular.bind(this)
+  }
+  calcular(){
+   let imc =(Number(this.state.peso) / (Number(this.state.altura) * Number(this.state.altura)));
+   let s = this.state
+   s.resultado = imc
+   if (s.resultado < 18.5){
+     s.resultadoText ='Abaixo do peso'
+    }
+    else if (s.resultado < 24.9) {
+     s.resultadoText ='Peso Normal'
+    }
+    else if (s.resultado < 29.9) {
+     s.resultadoText ='Obesidade Grau I'
+    }
+    else if (s.resultado < 34.9) {
+      s.resultadoText ='Obesidade Grau II'
+    }
+    else{
+      s.resultadoText ='Obesidade Grau III'
+    }
+   this.setState(s)
+
+
+
+  }
+
+  render(){
+    return(
+      <View style={styles.container}>
+        <Text style={styles.textoInicio}>TESTE DE IMC</Text>
+
+        <View>
+          <TextInput
+          style={styles.input}
+          placeholder='Digite sua altura'
+          onChangeText={(altura) => this.setState({altura})}/>
+
+          <TextInput
+          style={styles.input}
+          placeholder='Digite seu peso'
+          onChangeText={(peso) => this.setState({peso})}/>
+        </View>
+
+          <View>
+             <TouchableOpacity style={styles.botao} onPress={this.calcular}>
+             <Text style={styles.buttontext}>Calcular
+             </Text>
+             </TouchableOpacity>
+          
+        </View>
+        
+        <Text style={styles.resultado}> IMC: {this.state.resultado.toFixed(2)}</Text>
+        <Text style={[styles.resultado,{fontSize:20}]}>Resultado: {this.state.resultadoText}</Text>
+
+      </View>
+    );
+  }
+}
+       
+const styles = StyleSheet.create({
+    container:{
+      flex: 1,
+      backgroundColor: '#F0FFFF',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }, 
+    input:{
+      borderWidth: 2,
+      borderColor: 'red',
+      textAlign: 'center',
+      fontSize: 30,
+      marginBottom: 15,
+      borderRadius: 10,
+      width: 250,
+    },
+    botao:{
+      backgroundColor: '',
+      borderWidth: 2,
+      borderColor: '',
+      width: 100,
+      height: 50,
+      textAlign: 'center',
+      justifyContent: 'center',
+      borderRadius: 20,
+    },
+    limpar:{
+      backgroundColor: 'green',
+      width: 100,
+      height: 50,
+      textAlign: 'center',
+      justifyContent: 'center',
+      borderRadius: 20,
+    },
+    containerBotoes:{
+      flexDirection: 'row',
+      width: 250,
+      borderWidth: 2,
+      borderColor: 'black',
+      marginTop: 5,
+      marginBottom: 5,
+      padding: 5,
+      justifyContent: 'space-around'
+    },
+    textoBotao:{
+      textAlign: 'center',
+      fontWeight: 'bold',
+      lineHeight: 30,
+      color: 'white'
+    },
+    textoInicio:{
+      color: '#1C1C1C',
+      fontWeight: 'bold',
+      fontSize: 30,
+      marginBottom: 8,
+    },
+    resultadoText:{
+      color: '#808080',
+      borderWidth: 2,
+      borderColor: 'black',
+      borderRadius: 20,
+      fontSize: 30,
+      width: 250,
+      textAlign: 'center'
+    },
+    resultado:{
+      color: '#808080',
+      borderColor: 'red',
+      borderRadius: 20,
+      fontSize: 30,
+      width: 250,
+      textAlign: 'center'
+    }
+  });
