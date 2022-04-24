@@ -1,0 +1,208 @@
+import React, { useState } from "react";
+import {Divider} from 'react-native-paper';
+import {
+  StyleSheet,
+  Text,
+  FlatList,
+  TextInput,
+  View,
+  TouchableOpacity,
+  } from "react-native";
+export default class App extends React.Component {
+  state = {
+    codigo : 0,
+    descricao: '',
+    preco: 0,
+    quantidade: 0,
+    inputCodigo: React.createRef(),
+    inputDescricao: React.createRef(),
+    inputPreco: React.createRef(),
+    inputQuantidade: React.createRef(),
+    lista: [
+      { id: 0,  codigo: 1000,  descricao: "Teclado Gamer RGB", preco: "758.99", quantidade: "237"},
+      { id: 1,  codigo: 1001,  descricao: "Memória RAM 16GB", preco: " 459.99", quantidade: "436" },
+      { id: 2,  codigo: 1002,  descricao: "Ryzen 9 5900x", preco: " 3249.99", quantidade: "244"},
+      { id: 3,  codigo: 1003,  descricao: "RTX 3090TI", preco: " 12990.00", quantidade: "196"},
+    ],
+  };
+
+  chave = this.state.lista.length;
+
+  addProduto = this.addProduto.bind(this);
+  apagarProduto = this.apagarProduto.bind(this);
+  editarProduto = this.editarProduto.bind(this);
+
+  resetInputs(){
+    this.state.codigo = '';
+    this.state.preco = '';
+    this.state.descricao = '';
+    this.state.quantidade = '';
+
+    this.state.inputCodigo.current.value = '';
+    this.state.inputPreco.current.value = '';
+    this.state.inputDescricao.current.value = '';
+    this.state.inputQuantidade.current.value = '';
+
+  }
+
+  editarProduto(){
+    const indice = this.state.lista.findeIndex(
+      item => (item.codigo == this.state.codigo));
+    
+    this.state.lista[indice].descricao = this.state.descricao;
+    this.state.lista[indice].preco = this.state.preco;
+    this.state.lista[indice].quantidade = this.state.quantidade;
+    
+    this.resetInputs(); 
+
+    this.setState(this.state.lista);
+
+  }
+
+  apagarProduto(){
+    const filtro = this.state.lista.filter(
+    item => (item.codigo != this.state.codigo
+              ));
+            
+    console.log(filtro);
+
+    this.resetInputs();
+
+    this.setState({lista:filtro});
+  }
+
+  addProduto() {
+    if(this.state.codigo == '' ||  this.state.descricao == '' || this.state.preco == '' ||this.state.quantidade == ''){
+      return;
+    } 
+  
+    this.state.lista.push({ id: ++this.chave, codigo: this.state.codigo,
+     descricao: this.state.descricao,  preco: this.state.preco, quantidade: this.state.quantidade });
+    this.setState(this.state);
+
+    this.resetInputs(); 
+  }
+  
+  render() {
+    return (
+      <View style={styles.container}>
+        <View>
+          <TextInput 
+            style={styles.entrada} 
+            placeholder="Codigo" 
+           keyboardType="numeric"
+            ref={this.state.inputCodigo}
+            onChangeText={(codigo) => {this.setState({codigo})}}
+          />
+
+          <TextInput 
+            style={styles.entrada} 
+            placeholder="Descrição"  
+            ref={this.state.inputDescricao}
+            onChangeText={(descricao) => {this.setState({descricao})}}
+          />
+  
+           <TextInput 
+            style={styles.entrada} 
+            placeholder="Preço"  
+            keyboardType="numeric"
+            ref={this.state.inputPreco}
+            onChangeText={(preco) => {this.setState({preco})}}
+          />
+          
+          <TextInput 
+            style={styles.entrada} 
+            placeholder="Quantidade" 
+            keyboardType="numeric"
+            ref={this.state.inputQuantidade}
+            onChangeText={(quantidade) => {this.setState({quantidade})}}
+          />
+          
+        </View>
+        <View style={styles.containerBotoes}>
+          <TouchableOpacity 
+          style={styles.botao} 
+          onPress={this.addProduto}>
+            <Text style={styles.textoBotao}>Adicionar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+          style={styles.botao}
+           onPress={this.apagarProduto}>
+            <Text style={styles.textoBotao}>Apagar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+           style={styles.botao}
+           onPress={this.editarProduto}>
+            <Text style={styles.textoBotao}>Editar</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.item}>
+        <View>
+          
+          <FlatList
+            data={this.state.lista}
+            renderItem={({ item }) => (
+              <Text style={styles.item}>{"[" + item.codigo + "] "  + item.descricao + "\n" + "Preço: R$" + item.preco + "\n" + "Quantidade: " + item.quantidade}</Text>
+            )}
+          />
+        </View>
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1,
+      backgroundColor: 'white',
+      justifyContent: 'center',
+    
+    },
+  entrada: {
+
+    textAlign: "center",
+    borderWidth: 2,
+    marginBottom: 5,
+    fontSize: 20,
+
+  },
+  containerBotoes:{
+      flexDirection: 'row',
+      width: 360,
+      borderWidth: 0,
+      borderColor: '',
+      marginTop: 5,
+      marginBottom: 5,
+      padding: 2,
+      justifyContent: 'space-around',
+      alignItems: "center",
+    }, 
+    
+  botao: {
+     backgroundColor: 'orange',
+      width: 100,
+      height: 40,
+      textAlign: 'center',
+      justifyContent: 'center',
+      borderRadius: 20,
+   
+  },
+  textoBotao: {
+    color: "white",
+    fontWeight: "bold",
+   textAlign: 'center',
+  },
+  item: {
+    fontSize: 14,
+    color: "gray",
+    marginBottom: 1,
+    marginVertical: 1,
+    padding: 1,
+    borderBottomColor: "black",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+});
