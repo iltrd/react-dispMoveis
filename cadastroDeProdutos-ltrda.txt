@@ -89,7 +89,8 @@ export default class App extends React.Component {
         <View>
           <TextInput 
             style={styles.entrada} 
-            placeholder="Codigo" 
+            placeholder="Codigo"
+            placeholderTextColor={'red'} 
            keyboardType="numeric"
             ref={this.state.inputCodigo}
             onChangeText={(codigo) => {this.setState({codigo})}}
@@ -97,7 +98,8 @@ export default class App extends React.Component {
 
           <TextInput 
             style={styles.entrada} 
-            placeholder="Descrição"  
+            placeholder="Descrição"
+            placeholderTextColor={'red'}  
             ref={this.state.inputDescricao}
             onChangeText={(descricao) => {this.setState({descricao})}}
           />
@@ -105,6 +107,7 @@ export default class App extends React.Component {
            <TextInput 
             style={styles.entrada} 
             placeholder="Preço"  
+             placeholderTextColor={'red'}
             keyboardType="numeric"
             ref={this.state.inputPreco}
             onChangeText={(preco) => {this.setState({preco})}}
@@ -113,6 +116,7 @@ export default class App extends React.Component {
           <TextInput 
             style={styles.entrada} 
             placeholder="Quantidade" 
+            placeholderTextColor={'red'}
             keyboardType="numeric"
             ref={this.state.inputQuantidade}
             onChangeText={(quantidade) => {this.setState({quantidade})}}
