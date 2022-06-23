@@ -1,0 +1,23 @@
+import React, {useState, createContext} from 'react';
+import { Alert } from 'react-native';
+
+export const LivroContext = createContext({});
+
+function EnviaProduto({children}){
+  const [produto, setProduto] = useState('');
+
+  function editaProduto(inputId, inputDescricao, inputPreco, inputQuantidade){
+    //console.log(inputId + " " + inputTitulo);
+    setProduto({id: inputId, descricao: inputDescricao, preco: inputPreco, quantidade: inputQuantidade});
+    console.log(produto);
+    return produto;
+  }
+
+  return(
+    <LivroContext.Provider value = {{produto, editaProduto}}>
+      {children}
+    </LivroContext.Provider>
+  )
+}
+
+export default EnviaProduto;

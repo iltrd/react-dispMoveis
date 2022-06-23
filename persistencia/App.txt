@@ -1,0 +1,14 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import Navegacao from './components/Navegacao';
+import EnviaProduto from './components/EnviaProduto'
+
+export default function App() {
+   return (
+    <NavigationContainer>
+      <EnviaProduto>
+        <Navegacao/>
+      </EnviaProduto>
+    </NavigationContainer>
+  );
+}

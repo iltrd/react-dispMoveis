@@ -1,0 +1,178 @@
+import React, {useState, useContext, useEffect} from 'react';
+import { StyleSheet, TextInput, Text, View, TouchableOpacity, Alert} from 'react-native';
+
+import {useNavigation} from '@react-navigation/native';
+import * as SQLite from 'expo-sqlite';
+
+import {LivroContext} from '../components/EnviaProduto';
+
+export default function Formulario() {
+  const navigation = useNavigation();
+
+  const {produto} = useContext(LivroContext);
+
+  const db = SQLite.openDatabase('db.MainDB');
+  
+  const [id, setId] = useState('');
+  const [inputDescricao, setDescricao] = useState('');
+  const [inputPreco, setPreco] = useState('');
+  const [inputQuantidade, setQuantidade] = useState('');  
+
+  useEffect(() => { 
+      setId(produto.id);
+      if(produto.id != ''){
+        setDescricao(produto.titulo);
+        setPreco(produto.assunto);
+        setQuantidade(produto.editora);
+      }else{
+        setDescricao('');
+        setPreco('');
+        setQuantidade('');
+      }
+      deleteRecord();
+      updateRecord();      
+  }, []);
+
+  const setData = async () => {
+      if (inputDescricao == '' || inputPreco == '' ||  inputQuantidade == '') {
+          Alert.alert('Os capos devem estar preenchidos!')
+      } else {
+          await db.transaction(async (tx) => {
+            await tx.executeSql(
+                "INSERT INTO LIVRO ( DESCRICAO, PRECO, QUANTIDADE) VALUES (?,?,?,?)",
+                [inputDescricao, inputPreco, inputQuantidade],
+                (tx, results) => {
+                  console.log('Resultado', results.rowsAffected);
+                  if (results.rowsAffected > 0) {
+                    Alert.alert('Dados gravados com sucesso!');
+                  } else Alert.alert('Ocorreu um erro....');
+                }
+            );
+        })
+        navigation.navigate('Home');            
+      }
+    }
+
+    const deleteRecord = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'DELETE FROM PRODUTO WHERE ID=?',
+        [id],
+        (tx, results) => {
+          console.log('Resultado:', results.rowsAffected);
+          if (results.rowsAffected > 0) {
+            console.log('Produto apagado');
+            navigation.navigate('Home');
+          }
+        }
+      );
+    });        
+  }
+
+  const updateRecord = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'UPDATE PRODUTO SET DESCRICAO=?,PRECO=?,QUANTIDADE=? WHERE ID=?',
+        [inputDescricao, inputPreco, inputQuantidade, id],
+        (tx, results) => {
+          console.log('Resultado:', results.rowsAffected);
+          if (results.rowsAffected > 0) {
+            console.log('Produto alterado');
+            navigation.navigate('Home');
+          }else{
+            console.log('Error...');
+          }
+        }
+      );
+    });        
+  }
+
+    
+  
+  return (
+   <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          
+          <TextInput
+            style={styles.entrada}
+            placeholder="Código"
+            placeholderTextColor="red"
+            keyboardType="Numeric"
+            value={id}
+            onChangeText={(text) => setId(text)}
+            />
+
+          <TextInput
+            style={styles.entrada}
+            placeholder="Descrição"
+            placeholderTextColor="red"
+            value={inputDescricao}
+            onChangeText={(text) => setDescricao(text)}
+            />
+
+            <TextInput
+            style={styles.entrada}
+            placeholder="Preço"
+            placeholderTextColor="red"
+            keyboardType="Numeric"
+            value={inputPreco}
+            onChangeText={(text) => setPreco(text)}
+            />
+
+            <TextInput
+            style={styles.entrada}
+            placeholder="Quantidade"
+            placeholderTextColor="red"
+            keyboardType="Numeric"
+            value={inputQuantidade}
+            onChangeText={(text) => setQuantidade(text)}
+            />
+
+          
+          {(id=='' ? (<TouchableOpacity style={styles.botao} onPress={setData}>
+            <Text style={styles.textoBotao}>Novo</Text>
+          </TouchableOpacity>): (null))}
+
+          {(id!='' ? (<TouchableOpacity style={styles.botao} onPress={updateRecord}>
+            <Text style={styles.textoBotao}>Editar</Text>
+          </TouchableOpacity>): (null))}
+
+          {(id!='' ? (<TouchableOpacity style={styles.botao} onPress={deleteRecord}>
+            <Text style={styles.textoBotao}>Apagar</Text>
+          </TouchableOpacity>): (null))}
+
+        </View>
+      </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    marginTop: 30,
+  },
+  inputContainer:{
+    width: 300,
+  },
+  entrada: {
+    textAlign: 'center',
+    borderWidth: 2,
+    marginBottom: 3,
+    fontSize: 20,
+  },
+  botao: {
+    alignItems: 'center',
+    backgroundColor: 'orange',
+    padding: 10,
+    marginTop: 10,
+    borderRadius: 20,
+    fontSize: 20,
+  },
+  textoBotao: {
+    color: 'white',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+});
